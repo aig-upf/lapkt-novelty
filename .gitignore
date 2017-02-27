@@ -1,0 +1,48 @@
+
+# config files
+config.json
+
+# Generated planners
+generated
+
+# Automatically-generated documentation
+# doc
+
+# Clang static analysis output
+analysis
+
+# Build files
+_build
+lib
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Executables
+*.bin
+
+# Temporary files
+*.swp
+*.dblite
+*.log
+*.graph
+*.strips
+
+# Python bytecodes
+*.pyc
+
+# Temporary output files
+*.out
+
+# Binaries
+*.bin
