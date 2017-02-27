@@ -4,10 +4,7 @@
 
 #include <limits>
 
-#include <lapkt/tools/logging.hxx>
-#include <lapkt/components/open_lists.hxx>
-
-#include <fs_types.hxx>
+#include <lapkt/search/components/open_lists.hxx>
 
 
 namespace lapkt { namespace novelty {

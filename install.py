@@ -32,6 +32,11 @@ def list_header_files(src_dir):
 def remove_prefix(s, prefix):
     return s[len(prefix):] if s.startswith(prefix) else s
 
+
+def report_copied_file(src, dst):
+	prefix = os.path.commonprefix((src, dst))
+	print("{}  -->  {}".format(remove_prefix(src, prefix), remove_prefix(dst, prefix)))
+	
 def copy_headers(src_dir, dest_dir):
 	print("Installing module files from dir '{}' to dir '{}'".format(src_dir, dest_dir))
 	headers = list_header_files(src_dir)
@@ -42,7 +47,7 @@ def copy_headers(src_dir, dest_dir):
 		#print(subpath, dest_header)
 		os.makedirs(os.path.dirname(dest_header), exist_ok=True)
 		shutil.copy2(header, dest_header)
-		print("Copied file '{}' to '{}'".format(header, dest_header))
+		report_copied_file(header, dest_header)
 	
 
 def copy_all(src_dir, dest_dir, ext):
@@ -50,6 +55,7 @@ def copy_all(src_dir, dest_dir, ext):
 	for f in files:
 		if os.path.isfile(f):
 			shutil.copy2(f, dest_dir)
+			report_copied_file(f, dest_dir)
 			
 			
 def main(args):
