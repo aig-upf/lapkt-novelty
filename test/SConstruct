@@ -6,6 +6,7 @@ import os
 import fnmatch
 
 HOME = os.path.expanduser("~")
+tests = ['novelty']
 
 def locate_source_files(base_dir, pattern):
 	matches = []
@@ -25,8 +26,6 @@ if lapkt_dir is None:
 
 
 env = Environment()
-
-tests = ['novelty']
 
 
 # GTest includes
@@ -52,7 +51,7 @@ env.Append(LIBS=[
 ])
 
 # Other dependencies:
-env.Append(LIBS=[File(gtest_dir + '/libgtest.a'), 'boost_system', 'boost_timer', 'boost_chrono', 'rt', 'boost_filesystem', 'm', 'pthread'])
+env.Append(LIBS=[File(gtest_dir + '/libgtest.a'), 'boost_system', 'pthread'])
 
 lapkt2_lib_dir = os.path.join(lapkt_dir, 'lib')
 lib_paths = [lapkt2_lib_dir, HOME + '/local/lib']
