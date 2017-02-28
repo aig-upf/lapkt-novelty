@@ -17,6 +17,7 @@ std::ostream& operator<<(std::ostream& os, const Novelty& nov);
 //! Compute a vector with the indexes of those elements in a given valuation that are novel wrt a "parent" valuation.
 template <typename FeatureValueT>
 std::vector<unsigned> derive_novel(const std::vector<FeatureValueT>& current, const std::vector<FeatureValueT>& parent) {
+	assert(current.size() == parent.size());
 	std::vector<unsigned> novel;
 	for (unsigned i = 0; i < current.size(); ++i) {
 		if (current[i] != parent[i]) {
