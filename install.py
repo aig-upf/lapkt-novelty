@@ -33,8 +33,13 @@ def remove_prefix(s, prefix):
     return s[len(prefix):] if s.startswith(prefix) else s
 
 
-def report_copied_file(src, dst):
+def common_subpath_prefix(src, dst):
 	prefix = os.path.commonprefix((src, dst))
+	last_slash = prefix.rfind("/")
+	return prefix[:last_slash+1]
+	
+def report_copied_file(src, dst):
+	prefix = common_subpath_prefix(src, dst)
 	print("{}  -->  {}".format(remove_prefix(src, prefix), remove_prefix(dst, prefix)))
 	
 def copy_headers(src_dir, dest_dir):
