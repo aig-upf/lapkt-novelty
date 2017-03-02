@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <vector>
-#include <algorithm>
+
 
 #include "base.hxx"
 #include <lapkt/tools/logging.hxx>
