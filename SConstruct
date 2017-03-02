@@ -5,6 +5,7 @@ import os
 # read variables from the cache, a user's custom.py file or command line arguments
 vars = Variables(['variables.cache', 'custom.py'], ARGUMENTS)
 vars.Add(BoolVariable('debug', 'Debug build', 'no'))
+vars.Add(BoolVariable('edebug', 'Extreme debug', 'no'))
 
 # The LAPKT path can be optionally specified, otherwise we fetch it from the corresponding environment variable.
 vars.Add(PathVariable('lapkt', 'Path where the LAPKT library is installed', os.getenv('LAPKT', ''), PathVariable.PathIsDir))
@@ -40,21 +41,25 @@ env.VariantDir(build_dirname, '.')
 Help(vars.GenerateHelpText(env))
 
 env.Append(CCFLAGS = ['-Wall', '-pedantic', '-std=c++11' ])  # Flags common to all options
-	
+
 
 # Extreme debug implies normal debug as well
-if env['debug']:
+if env['debug'] or env['edebug']:
 	env.Append(CCFLAGS = ['-g', '-DDEBUG' ])
 	lib_name = 'lapkt-novelty-debug'
 else:
 	env.Append(CCFLAGS = ['-g', '-O3', '-DNDEBUG' ])
 	lib_name = 'lapkt-novelty'
 
+# Additionally, extreme debug implies a different name plus extra compilation flags
+if env['edebug']:
+	env.Append(CCFLAGS = ['-DEDEBUG'])
+	lib_name = 'lapkt-novelty-edebug'
 
 # Base include directories
 include_paths = ['src', os.path.join(env['lapkt'], 'include')]
 isystem_paths = []
-	
+
 
 sources = locate_source_files('src', '*.cxx')
 
