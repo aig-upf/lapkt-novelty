@@ -91,7 +91,9 @@ public:
 	virtual void explain(unsigned atom) const {  }
 	
 	
-	virtual void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const {}
+	virtual void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const {
+		throw std::runtime_error("This NoveltyEvaluator is not yet ready to invoke this method");
+	}	
 	
 protected:
 	
