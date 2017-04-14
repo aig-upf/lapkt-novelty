@@ -109,8 +109,31 @@ public:
 		return evaluate_pairs(valuation) ? 2 : std::numeric_limits<unsigned>::max();
 	}
 
+	unsigned evaluate_1(const ValuationT& valuation, std::vector<unsigned>& novelty1atom_idxs) override {
+		bool exists_novel_tuple = false;
+		for (unsigned var_index = 0; var_index < valuation.size(); ++var_index) {
+			if (update_tuple1(var_index, valuation[var_index])) {
+				novelty1atom_idxs.push_back(var_index);
+				exists_novel_tuple = true;
+			}
+		}
+		return exists_novel_tuple ? 1 : std::numeric_limits<unsigned>::max();
+	}
+	
+	unsigned evaluate_1(const ValuationT& valuation, const std::vector<unsigned>& new_atom_idxs, std::vector<unsigned>& novelty1atom_idxs) override {
+		bool exists_novel_tuple = false;
+		for (unsigned var_index:new_atom_idxs) {
+			if (update_tuple1(var_index, valuation[var_index])) {
+				novelty1atom_idxs.push_back(var_index);
+				exists_novel_tuple = true;
+			}			
+		}
+		return exists_novel_tuple ? 1 : std::numeric_limits<unsigned>::max();
+		
+	}
+	
 protected:
-
+	
 	unsigned _evaluate(const ValuationT& valuation, const std::vector<unsigned>& novel, unsigned k) override {
 		assert(!valuation.empty());
 		

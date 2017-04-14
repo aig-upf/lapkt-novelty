@@ -57,7 +57,13 @@ public:
 		throw std::runtime_error("This novelty evaluator is not prepared to compute 1.5 novelty values");
 	}
 	
+	virtual unsigned evaluate_1(const ValuationT& valuation, std::vector<unsigned>& novelty1atoms) {
+		throw std::runtime_error("UNIMPLEMENTED");
+	}
 	
+	virtual unsigned evaluate_1(const ValuationT& valuation, const std::vector<unsigned>& new_atom_idxs, std::vector<unsigned>& novelty1atoms) {
+		throw std::runtime_error("UNIMPLEMENTED");
+	}
 	
 	//! Evaluate assuming all elements in the valuation can be novel
 	unsigned evaluate(const ValuationT& valuation) {
