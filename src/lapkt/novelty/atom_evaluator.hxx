@@ -62,7 +62,8 @@ protected:
 		_ignore_negative(ignore_negative),
 		_num_atom_indexes(_indexer.num_indexes()),
 		_seen_tuples_sz_1(_num_atom_indexes, false),
-		_t2marker(num_combined_indexes(), _num_atom_indexes)
+		_t2marker(num_combined_indexes(), _num_atom_indexes),
+		_piw_table(_num_atom_indexes, std::vector<bool>(_num_atom_indexes, false))
 	{}
 
 public:
@@ -257,10 +258,17 @@ protected:
 		return false;
 	}
 	
+	void print_indexes(const std::vector<unsigned> indexes) {
+		for (auto idx:indexes) {
+			std::cout << _indexer.to_atom(idx) << ", ";
+		}
+		std::cout << std::endl;
+	}
+	
 	
 	//! 'valuation' contains feature values
 	//! 'novel' contains the indexes of 'valuation' which contain values that are novel wrt the parent valuation
-	//! 'special' contains indexes of feature-value pairs;
+	//! 'special' contains indexes of feature-value pairs which want to be given special consideration
 	bool evaluate_1_5(const ValuationT& valuation, const std::vector<unsigned>& novel, const std::vector<unsigned>& special) override {
 		if(this->_max_novelty < 2) {  // i.e. make sure the evaluator was prepared for this width!
 			throw std::runtime_error("The AtomNoveltyEvaluator was not prepared for width-2 computation. You need to invoke the creator with max_width=2");
@@ -325,7 +333,40 @@ protected:
 		
 		return exists_novel_tuple;
 	}
+
+	bool evaluate_piw(const ValuationT& valuation) override {
+		return evaluate_piw(valuation, index_valuation(valuation)); // All considered special
+	}	
 	
+	
+	bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special) override {
+		if(this->_max_novelty < 2) {  // i.e. make sure the evaluator was prepared for this width!
+			throw std::runtime_error("The AtomNoveltyEvaluator was not prepared for width-2 computation. You need to invoke the creator with max_width=2");
+		}
+		_t2marker.start();
+		// LPT_DEBUG("cout", "Computing 1,5-Novelty...");
+
+		auto all_indexes = index_valuation(valuation);
+		
+		bool exists_novel_tuple = false;
+		
+		for (unsigned feat_idx1:special) {
+			for (unsigned feat_idx2:all_indexes) {
+				if (feat_idx1==feat_idx2) continue;
+				
+				assert(feat_idx1 < _piw_table.size() && feat_idx2 < _piw_table[feat_idx2].size());
+				std::vector<bool>::reference ref = _piw_table[feat_idx1][feat_idx2];
+				if (!ref) { // The tuple is new
+					ref = true;
+					exists_novel_tuple = true;
+					// XXX LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
+				}
+				
+			}
+		}
+		
+		return exists_novel_tuple;
+	}
 	
 	void atoms_in_novel_tuple(std::unordered_set<unsigned>& atoms) override {
 		_t2marker.atoms_in_novel_tuple(atoms);
@@ -338,7 +379,8 @@ protected:
 	virtual void explain(unsigned atom) const override { _t2marker.explain(atom); }
 	
 	
-	
+protected:
+	std::vector<std::vector<bool>> _piw_table;
 };
 
 //! A 2-tuple marker based on a large std::vector of bools that keeps, for each possible index
