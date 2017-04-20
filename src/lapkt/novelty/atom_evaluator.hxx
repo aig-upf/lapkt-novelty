@@ -335,11 +335,12 @@ protected:
 	}
 
 	bool evaluate_piw(const ValuationT& valuation) override {
-		return evaluate_piw(valuation, index_valuation(valuation)); // All considered special
+		std::vector<bool> _;
+		return evaluate_piw(valuation, index_valuation(valuation), _); // All considered special
 	}	
 	
 	
-	bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special) override {
+	bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special, std::vector<bool>& novelty_contributors) override {
 		if(this->_max_novelty < 2) {  // i.e. make sure the evaluator was prepared for this width!
 			throw std::runtime_error("The AtomNoveltyEvaluator was not prepared for width-2 computation. You need to invoke the creator with max_width=2");
 		}
@@ -350,7 +351,11 @@ protected:
 		
 		bool exists_novel_tuple = false;
 		
-		for (unsigned feat_idx1:special) {
+		novelty_contributors = std::vector<bool>(special.size(), false); // resize the vector
+		
+		for (unsigned i1 = 0; i1 < special.size(); ++i1) {
+// 		for (unsigned feat_idx1:special) {
+			unsigned feat_idx1 = special[i1];
 			for (unsigned feat_idx2:all_indexes) {
 				if (feat_idx1==feat_idx2) continue;
 				
@@ -359,6 +364,7 @@ protected:
 				if (!ref) { // The tuple is new
 					ref = true;
 					exists_novel_tuple = true;
+					novelty_contributors[i1] = true;
 					// XXX LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
 				}
 				

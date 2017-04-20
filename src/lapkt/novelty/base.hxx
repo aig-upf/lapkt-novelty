@@ -43,7 +43,7 @@ public:
 	virtual unsigned evaluate(const ValuationT& valuation, unsigned k) = 0;
 	
 	
-	virtual bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special) {
+	virtual bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special, std::vector<bool>& novelty_contributors) {
 		throw std::runtime_error("This novelty evaluator is not prepared to compute PIW values");
 	}
 	
