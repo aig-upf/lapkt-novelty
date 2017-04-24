@@ -6,6 +6,9 @@
 #include <limits>
 #include <unordered_set>
 
+#include <boost/dynamic_bitset.hpp>
+
+
 namespace lapkt { namespace novelty {
 
 //! Discrete novelty values
@@ -43,13 +46,13 @@ public:
 	virtual unsigned evaluate(const ValuationT& valuation, unsigned k) = 0;
 	
 	
-	virtual bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special, std::vector<bool>& novelty_contributors) {
-		throw std::runtime_error("This novelty evaluator is not prepared to compute PIW values");
-	}
-	
 	virtual bool evaluate_piw(const ValuationT& valuation) {
 		throw std::runtime_error("This novelty evaluator is not prepared to compute PIW values");
 	}	
+	virtual bool evaluate_piw(const ValuationT& valuation, const boost::dynamic_bitset<>& special_idxs, boost::dynamic_bitset<>& novelty_contributors) {
+		throw std::runtime_error("This novelty evaluator is not prepared to compute PIW values");
+	}
+	
 	
 	bool evaluate_1_5(const ValuationT& valuation, const ValuationT& parent, const std::vector<unsigned>& special) {
 		return evaluate_1_5(valuation, derive_novel(valuation, parent), special);
@@ -64,11 +67,11 @@ public:
 		throw std::runtime_error("This novelty evaluator is not prepared to compute 1.5 novelty values");
 	}
 	
-	virtual unsigned evaluate_1(const ValuationT& valuation, std::vector<unsigned>& novelty1atoms) {
+	virtual unsigned evaluate_1(const ValuationT& valuation, boost::dynamic_bitset<>& novelty1atom_idxs) {
 		throw std::runtime_error("UNIMPLEMENTED");
 	}
 	
-	virtual unsigned evaluate_1(const ValuationT& valuation, const std::vector<unsigned>& new_atom_idxs, std::vector<unsigned>& novelty1atoms) {
+	virtual unsigned evaluate_1(const ValuationT& valuation, const boost::dynamic_bitset<>& new_atom_idxs, boost::dynamic_bitset<>& novelty1atom_idxs) {
 		throw std::runtime_error("UNIMPLEMENTED");
 	}
 	

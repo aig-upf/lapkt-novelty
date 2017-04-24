@@ -4,7 +4,6 @@
 #include <cassert>
 #include <vector>
 
-
 #include "base.hxx"
 #include <lapkt/tools/logging.hxx>
 #include <lapkt/tools/utils.hxx>
@@ -110,22 +109,27 @@ public:
 		return evaluate_pairs(valuation) ? 2 : std::numeric_limits<unsigned>::max();
 	}
 
-	unsigned evaluate_1(const ValuationT& valuation, std::vector<unsigned>& novelty1atom_idxs) override {
+	unsigned evaluate_1(const ValuationT& valuation, boost::dynamic_bitset<>& novelty1atom_idxs) override {
 		bool exists_novel_tuple = false;
+		assert(novelty1atom_idxs.size() == valuation.size());
 		for (unsigned var_index = 0; var_index < valuation.size(); ++var_index) {
 			if (update_tuple1(var_index, valuation[var_index])) {
-				novelty1atom_idxs.push_back(var_index);
+				novelty1atom_idxs[var_index] = true;
 				exists_novel_tuple = true;
 			}
 		}
 		return exists_novel_tuple ? 1 : std::numeric_limits<unsigned>::max();
 	}
 	
-	unsigned evaluate_1(const ValuationT& valuation, const std::vector<unsigned>& new_atom_idxs, std::vector<unsigned>& novelty1atom_idxs) override {
+	unsigned evaluate_1(const ValuationT& valuation, const boost::dynamic_bitset<>& new_atom_idxs, boost::dynamic_bitset<>& novelty1atom_idxs) override {
 		bool exists_novel_tuple = false;
-		for (unsigned var_index:new_atom_idxs) {
+		assert(novelty1atom_idxs.size() == valuation.size());
+		assert(new_atom_idxs.size() == valuation.size());
+		
+		for (unsigned var_index = 0; var_index < valuation.size(); ++var_index) {
+			if (!new_atom_idxs[var_index]) continue;
 			if (update_tuple1(var_index, valuation[var_index])) {
-				novelty1atom_idxs.push_back(var_index);
+				novelty1atom_idxs[var_index] = true;
 				exists_novel_tuple = true;
 			}			
 		}
@@ -335,28 +339,44 @@ protected:
 	}
 
 	bool evaluate_piw(const ValuationT& valuation) override {
-		std::vector<bool> _;
-		return evaluate_piw(valuation, index_valuation(valuation), _); // All considered special
+		boost::dynamic_bitset<> _(valuation.size());
+		boost::dynamic_bitset<> all_idxs(valuation.size());
+		all_idxs.set(); // Sets all bits to one
+		return evaluate_piw(valuation, all_idxs, _); // All considered special
 	}	
 	
 	
-	bool evaluate_piw(const ValuationT& valuation, const std::vector<unsigned>& special, std::vector<bool>& novelty_contributors) override {
+	bool evaluate_piw(const ValuationT& valuation, const boost::dynamic_bitset<>& special_idxs, boost::dynamic_bitset<>& novelty_contributors) override {
 		if(this->_max_novelty < 2) {  // i.e. make sure the evaluator was prepared for this width!
 			throw std::runtime_error("The AtomNoveltyEvaluator was not prepared for width-2 computation. You need to invoke the creator with max_width=2");
 		}
 		_t2marker.start();
 		// LPT_DEBUG("cout", "Computing 1,5-Novelty...");
 
-		auto all_indexes = index_valuation(valuation);
+		assert(special_idxs.size() == valuation.size());
+		assert(novelty_contributors.size() == valuation.size());
+		
+		auto all_features = index_valuation(valuation);
+		
+		// Compute the atom indexes for the atoms which are in the set marked as special
+		std::vector<unsigned> ii;
+		std::vector<unsigned> vv;
+		for(std::size_t idx = special_idxs.find_first(); idx != boost::dynamic_bitset<>::npos; idx = special_idxs.find_next(idx)) {
+			const auto& value = valuation[idx];
+			if (_ignore_negative && value == 0) continue;
+
+			ii.push_back(idx);
+			vv.push_back(_indexer.to_index(idx, value));
+		}		
+		
 		
 		bool exists_novel_tuple = false;
 		
-		novelty_contributors = std::vector<bool>(special.size(), false); // resize the vector
-		
-		for (unsigned i1 = 0; i1 < special.size(); ++i1) {
+		for (unsigned i0 = 0; i0 < vv.size(); ++i0) {
+			
 // 		for (unsigned feat_idx1:special) {
-			unsigned feat_idx1 = special[i1];
-			for (unsigned feat_idx2:all_indexes) {
+			unsigned feat_idx1 = vv[i0];
+			for (unsigned feat_idx2:all_features) {
 				if (feat_idx1==feat_idx2) continue;
 				
 				/*
@@ -372,8 +392,8 @@ protected:
 				if (!ref) { // The tuple is new
 					ref = true;
 					exists_novel_tuple = true;
-					novelty_contributors[i1] = true;
-					// XXX LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
+					novelty_contributors[ii[i0]] = true;
+// 					LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
 				}
 				
 				
