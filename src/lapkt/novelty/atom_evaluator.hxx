@@ -359,14 +359,14 @@ protected:
 			for (unsigned feat_idx2:all_indexes) {
 				if (feat_idx1==feat_idx2) continue;
 				
-				
+				/*
 				if (_t2marker.update_sz2_table(feat_idx1, feat_idx2)) {
 					exists_novel_tuple = true ;
 					novelty_contributors[i1] = true;
 					//LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
 				}				
+				*/
 				
-				/*
 				assert(feat_idx1 < _piw_table.size() && feat_idx2 < _piw_table[feat_idx2].size());
 				std::vector<bool>::reference ref = _piw_table[feat_idx1][feat_idx2];
 				if (!ref) { // The tuple is new
@@ -375,7 +375,7 @@ protected:
 					novelty_contributors[i1] = true;
 					// XXX LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
 				}
-				*/
+				
 				
 			}
 		}
