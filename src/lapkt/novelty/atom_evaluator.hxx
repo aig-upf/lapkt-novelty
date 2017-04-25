@@ -424,7 +424,7 @@ protected:
 class BoolVectorTuple2Marker {
 public:
 	static bool can_handle(unsigned num_combined_indexes) {
-		return expected_size(num_combined_indexes) < 10000000; // i.e. max 10MB per table.
+		return expected_size(num_combined_indexes) < 50000000; // i.e. max 50MB per table.
 	}
 
 	BoolVectorTuple2Marker(unsigned num_combined_indexes, unsigned num_atom_indexes) :
