@@ -61,8 +61,8 @@ protected:
 		_ignore_negative(ignore_negative),
 		_num_atom_indexes(_indexer.num_indexes()),
 		_seen_tuples_sz_1(_num_atom_indexes, false),
-		_t2marker(num_combined_indexes(), _num_atom_indexes),
-		_piw_table(_num_atom_indexes, std::vector<bool>(_num_atom_indexes, false))
+		_t2marker(num_combined_indexes(), _num_atom_indexes)
+// 		_piw_table(_num_atom_indexes, std::vector<bool>(_num_atom_indexes, false))
 	{}
 
 public:
@@ -265,6 +265,10 @@ protected:
 		std::cout << std::endl;
 	}
 	
+	void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const override {
+		atoms = _seen_tuples_sz_1; // Copy the vector
+	}		
+	
 	
 	//! 'valuation' contains feature values
 	//! 'novel' contains the indexes of 'valuation' which contain values that are novel wrt the parent valuation
@@ -332,6 +336,8 @@ protected:
 		return exists_novel_tuple;
 	}
 
+	/*
+	 
 	bool evaluate_piw(const ValuationT& valuation) override {
 		boost::dynamic_bitset<> _(valuation.size());
 		boost::dynamic_bitset<> all_idxs(valuation.size());
@@ -372,13 +378,13 @@ protected:
 			for (unsigned feat_idx2:all_features) {
 				if (feat_idx1==feat_idx2) continue;
 				
-				/*
-				if (_t2marker.update_sz2_table(feat_idx1, feat_idx2)) {
-					exists_novel_tuple = true ;
-					novelty_contributors[i1] = true;
-					//LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
-				}				
-				*/
+				
+// 				if (_t2marker.update_sz2_table(feat_idx1, feat_idx2)) {
+// 					exists_novel_tuple = true ;
+// 					novelty_contributors[i1] = true;
+// 					//LPT_DEBUG("cout", "Tuple makes novelty 1.5!: "); print_indexes({feat_idx1, feat_idx2});
+// 				}				
+				
 				
 				assert(feat_idx1 < _piw_table.size() && feat_idx2 < _piw_table[feat_idx2].size());
 				std::vector<bool>::reference ref = _piw_table[feat_idx1][feat_idx2];
@@ -395,13 +401,9 @@ protected:
 		return exists_novel_tuple;
 	}
 	
-	void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const override {
-		atoms = _seen_tuples_sz_1; // Copy the vector
-	}	
-	
-	
 protected:
-	std::vector<std::vector<bool>> _piw_table;
+ 	std::vector<std::vector<bool>> _piw_table;
+	*/
 };
 
 //! A 2-tuple marker based on a large std::vector of bools that keeps, for each possible index
