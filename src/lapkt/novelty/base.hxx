@@ -101,11 +101,6 @@ public:
 		return _evaluate(valuation, novel, k);
 	}
 	
-	//! Some subclasses might want to override this, that is expected to return all those atoms from the 
-	//! last evaluated state that are novel in the sense of belonging to a novel 2-tuple
-	virtual void atoms_in_novel_tuple(std::unordered_set<unsigned>&) {}
-	virtual void explain(unsigned atom) const {  }
-	
 	
 	virtual void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const {
 		throw std::runtime_error("This NoveltyEvaluator is not yet ready to invoke this method");
