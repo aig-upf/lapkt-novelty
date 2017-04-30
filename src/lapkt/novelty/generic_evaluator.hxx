@@ -62,6 +62,17 @@ protected:
 	std::unordered_set<Width2Tuple<FeatureValueT>, Width2TupleHasher<FeatureValueT>> _width_2_tuples;
 	
 	NoveltyTables _tables;
+	
+	//! This is used to cache a vector <0,1,...,k> of appropriate length and spare the creation of one each time we need it.
+	mutable std::vector<unsigned> _all_features_novel;	
+	
+	void setup_all_features_novel(const ValuationT& valuation) {
+		std::size_t num_features = valuation.size();
+		if (_all_features_novel.size() != num_features) {
+			_all_features_novel.resize(num_features);
+			std::iota(_all_features_novel.begin(), _all_features_novel.end(), 0);
+		}		
+	}	
 };
 
 } } // namespaces
