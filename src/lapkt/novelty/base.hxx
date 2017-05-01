@@ -74,7 +74,11 @@ public:
 	
 	virtual void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const {
 		throw std::runtime_error("This NoveltyEvaluator is not ready to invoke this method");
-	}	
+	}
+	
+	virtual void mark_nov2atoms_from_last_state(std::vector<std::pair<unsigned, unsigned>>& atoms) const {
+		throw std::runtime_error("This NoveltyEvaluator is not ready to invoke this method");
+	}
 	
 	//! Check only if the valuation contains a width-'k' tuple which is novel; return k if that is the case, or MAX if not
 	virtual unsigned _evaluate(const ValuationT& valuation, const std::vector<unsigned>& novel, unsigned k) = 0;

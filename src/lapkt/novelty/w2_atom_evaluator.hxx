@@ -87,50 +87,55 @@ public:
 		if (k==0) return std::numeric_limits<unsigned>::max();
 
 		if (k!=2) throw std::runtime_error("Unexpected width value");
+		
 		return evaluate_pairs(valuation, novel) ? 2 : std::numeric_limits<unsigned>::max();
 	}
+	
+	void mark_nov2atoms_from_last_state(std::vector<std::pair<unsigned, unsigned>>& atoms) const override {
+		atoms = _nov2_pairs;
+	}	
 
 protected:
+	std::vector<std::pair<unsigned, unsigned>> _nov2_pairs;
+	
+		
 	bool evaluate_pairs(const ValuationT& valuation, const std::vector<unsigned>& novel) {
 		assert(valuation.size() >= novel.size());
 		if (valuation.size() == novel.size()) return evaluate_pairs(valuation); // Just in case
 		
-		// WORK-IN-PROGRESS
-// 		std::vector<unsigned> novel_indexes, non_novel_indexes;
-// 		novel_indexes.reserve(novel_sz); non_novel_indexes.reserve(novel_sz);
-		
 		auto all_indexes = index_valuation(valuation);
 		auto novel_indexes = index_valuation(novel, valuation);
 		
-		bool exists_novel_tuple = false;
+		_nov2_pairs.clear();
+		
 		for (unsigned feat_index1:novel_indexes) {
 			for (unsigned feat_index2:all_indexes) {
 				if (feat_index1==feat_index2) continue;
-				exists_novel_tuple |= update_sz2_table(feat_index1, feat_index2);
+				if (update_sz2_table(feat_index1, feat_index2)) {
+					_nov2_pairs.push_back(std::make_pair(feat_index1, feat_index2));
+				}
 			}
 		}
-		return exists_novel_tuple;
+		return !_nov2_pairs.empty();
 	}	
-	
 	
 
 	bool evaluate_pairs(const ValuationT& valuation) {
-		return evaluate_pairs_from_index(index_valuation(valuation));
-	}
-
-	//! Evaluate all pairs from a vector with all feature value indexes.
-	bool evaluate_pairs_from_index(const std::vector<unsigned>& indexes) {
-		bool exists_novel_tuple = false;
-		unsigned sz = indexes.size();
+		auto all_indexes = index_valuation(valuation);
+		unsigned sz = all_indexes.size();
+		
+		_nov2_pairs.clear();
 		
 		for (unsigned i = 0; i < sz; ++i) {
-			unsigned index_i = indexes[i];
+			unsigned index_i = all_indexes[i];
 
 			for (unsigned j = i+1; j < sz; ++j) {
-				exists_novel_tuple |= update_sz2_table(index_i, indexes[j]);
+				if (update_sz2_table(index_i, all_indexes[j])) {
+					_nov2_pairs.push_back(std::make_pair(index_i, all_indexes[j]));
+				}
 			}
 		}
-		return exists_novel_tuple;
+		return !_nov2_pairs.empty();
 	}	
 
 	//! Helper. Map a feature valuation into proper indexes. Ignore negative values if so requested.
