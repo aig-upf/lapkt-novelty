@@ -80,6 +80,11 @@ public:
 	
 	void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const override {
 		atoms = _seen_tuples_sz_1; // Copy the vector
+	}
+	
+	void reset() override {
+		std::vector<bool> _(_seen_tuples_sz_1.size(), false);
+		_seen_tuples_sz_1.swap(_);
 	}	
 	
 protected:

@@ -39,8 +39,14 @@ public:
 	
 	//! Evaluate assuming all elements in the valuation can be novel
 	unsigned evaluate(const ValuationT& valuation, unsigned k) override {
-		this->setup_all_features_novel(valuation);
-		return _evaluate(valuation, this->_all_features_novel, k);
+		setup_all_features_novel(valuation);
+		return _evaluate(valuation, _all_features_novel, k);
+	}
+	
+	void reset() override {
+		_width_1_tuples.clear();
+		_width_2_tuples.clear();
+		for (auto& table:_tables) table.clear();
 	}	
 	
 protected:
@@ -72,7 +78,7 @@ protected:
 			_all_features_novel.resize(num_features);
 			std::iota(_all_features_novel.begin(), _all_features_novel.end(), 0);
 		}		
-	}	
+	}
 };
 
 } } // namespaces

@@ -80,6 +80,11 @@ public:
 		_w2evaluator.mark_nov2atoms_from_last_state(atoms);
 	}
 	
+	void reset() override {
+		_w1evaluator.reset();
+		_w2evaluator.reset();
+	}	
+	
 };
 
 } } // namespaces

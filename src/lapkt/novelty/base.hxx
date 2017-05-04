@@ -82,6 +82,8 @@ public:
 	
 	//! Check only if the valuation contains a width-'k' tuple which is novel; return k if that is the case, or MAX if not
 	virtual unsigned _evaluate(const ValuationT& valuation, const std::vector<unsigned>& novel, unsigned k) = 0;
+	
+	virtual void reset() = 0;
 
 protected:
 	//! The maximum width this evaluator is prepared to handle.

@@ -93,7 +93,12 @@ public:
 	
 	void mark_nov2atoms_from_last_state(std::vector<std::pair<unsigned, unsigned>>& atoms) const override {
 		atoms = _nov2_pairs;
-	}	
+	}
+	
+	void reset() override {
+		std::vector<bool> _(_seen_tuples_sz_2.size(), false);
+		_seen_tuples_sz_2.swap(_);
+	}		
 
 protected:
 	std::vector<std::pair<unsigned, unsigned>> _nov2_pairs;
