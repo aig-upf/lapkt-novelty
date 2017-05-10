@@ -35,7 +35,7 @@ protected:
 	std::vector<bool> _seen_tuples_sz_2;
 
 public:
-		
+
 	W2AtomEvaluator(const ValuationIndexerT& indexer, bool ignore_negative) :
 		Base(2),
 		_indexer(indexer),
@@ -52,7 +52,7 @@ public:
 	W2AtomEvaluator& operator=(const W2AtomEvaluator&) = default;
 	W2AtomEvaluator& operator=(W2AtomEvaluator&&) = default;
 	W2AtomEvaluator* clone() const override { return new W2AtomEvaluator(*this); }
-	
+
 
 	static unsigned num_combined_indexes(unsigned num_atom_indexes) {
 		// If we can have atom indexes in the range [0.._num_atom_indexes-1], then the highest combined index
@@ -63,56 +63,56 @@ public:
 
 	//! Return the approx. expected size (in bytes) of novelty-2 table.
 	uint64_t expected_size() { return expected_size(_num_atom_indexes); }
-	
+
 	static uint64_t expected_size(uint32_t num_atom_indexes) {
 		unsigned n_combined_indexes = num_combined_indexes(num_atom_indexes);
 		return n_combined_indexes / 8;
 	}
-	
-	
+
+
 	unsigned evaluate(const ValuationT& valuation, unsigned k) override {
 		assert(!valuation.empty());
 
 		if (k==0) return std::numeric_limits<unsigned>::max();
-			
+
 		if (k!=2) throw std::runtime_error("Unexpected width value");
-		
+
 		return evaluate_pairs(valuation) ? 2 : std::numeric_limits<unsigned>::max();
 	}
 
-	
+
 	unsigned _evaluate(const ValuationT& valuation, const std::vector<unsigned>& novel, unsigned k) override {
 		assert(!valuation.empty());
-		
+
 		if (k==0) return std::numeric_limits<unsigned>::max();
 
 		if (k!=2) throw std::runtime_error("Unexpected width value");
-		
+
 		return evaluate_pairs(valuation, novel) ? 2 : std::numeric_limits<unsigned>::max();
 	}
-	
+
 	void mark_nov2atoms_from_last_state(std::vector<std::pair<unsigned, unsigned>>& atoms) const override {
 		atoms = _nov2_pairs;
 	}
-	
+
 	void reset() override {
 		std::vector<bool> _(_seen_tuples_sz_2.size(), false);
 		_seen_tuples_sz_2.swap(_);
-	}		
+	}
 
 protected:
 	std::vector<std::pair<unsigned, unsigned>> _nov2_pairs;
-	
-		
+
+
 	bool evaluate_pairs(const ValuationT& valuation, const std::vector<unsigned>& novel) {
 		assert(valuation.size() >= novel.size());
 		if (valuation.size() == novel.size()) return evaluate_pairs(valuation); // Just in case
-		
+
 		auto all_indexes = index_valuation(valuation);
 		auto novel_indexes = index_valuation(novel, valuation);
-		
+
 		_nov2_pairs.clear();
-		
+
 		for (unsigned feat_index1:novel_indexes) {
 			for (unsigned feat_index2:all_indexes) {
 				if (feat_index1==feat_index2) continue;
@@ -122,15 +122,15 @@ protected:
 			}
 		}
 		return !_nov2_pairs.empty();
-	}	
-	
+	}
+
 
 	bool evaluate_pairs(const ValuationT& valuation) {
 		auto all_indexes = index_valuation(valuation);
 		unsigned sz = all_indexes.size();
-		
+
 		_nov2_pairs.clear();
-		
+
 		for (unsigned i = 0; i < sz; ++i) {
 			unsigned index_i = all_indexes[i];
 
@@ -141,7 +141,7 @@ protected:
 			}
 		}
 		return !_nov2_pairs.empty();
-	}	
+	}
 
 	//! Helper. Map a feature valuation into proper indexes. Ignore negative values if so requested.
 	std::vector<unsigned> index_valuation(const ValuationT& valuation) {
@@ -155,7 +155,7 @@ protected:
 		}
 		return indexes;
 	}
-	
+
 	//! This one performs the same mapping but assuming we only want the values given by the indexes in 'novel'
 	std::vector<unsigned> index_valuation(const std::vector<unsigned>& novel, const ValuationT& valuation) {
 		std::vector<unsigned> indexes;
@@ -166,18 +166,18 @@ protected:
 			indexes.push_back(_indexer.to_index(i, value));
 		}
 		return indexes;
-	}	
-	
+	}
+
 	bool update_sz2_table(unsigned atom1_index, unsigned atom2_index) {
 		uint32_t combined = _combine_indexes(atom1_index, atom2_index, _num_atom_indexes);
 		assert(combined < _seen_tuples_sz_2.size());
-		auto&& value = _seen_tuples_sz_2[combined]; // see http://stackoverflow.com/a/8399942
+		std::vector<bool>::reference value = _seen_tuples_sz_2[combined]; // see http://stackoverflow.com/a/8399942
 		if (!value) { // The tuple is new
 			value = true;
 			return true;
 		}
 		return false;
-	}	
+	}
 };
 
 } } // namespaces
