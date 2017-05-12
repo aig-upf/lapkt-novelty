@@ -70,6 +70,8 @@ public:
 	//! The number of features in the set
 	unsigned size() const { return _features.size(); }
 	
+	bool uses_extra_features() const { return true; }
+	
 protected:
 	//! The features in the set
 	std::vector<FeaturePT> _features;
@@ -86,6 +88,8 @@ public:
 	//!
 	template <typename StateT>
 	const std::vector<FeatureValueT>& evaluate(const StateT& state) const;
+	
+	bool uses_extra_features() const { return false; }
 };
 
 //! Partial specialization for all-bool states
@@ -119,6 +123,8 @@ public:
 		}
 		return valuation;
 	}
+	
+	bool uses_extra_features() const { return false; }
 };
 
 } } // namespaces
