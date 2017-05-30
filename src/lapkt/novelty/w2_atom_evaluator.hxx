@@ -91,18 +91,12 @@ public:
 		return evaluate_pairs(valuation, novel) ? 2 : std::numeric_limits<unsigned>::max();
 	}
 
-	void mark_nov2atoms_from_last_state(std::vector<std::pair<unsigned, unsigned>>& atoms) const override {
-		atoms = _nov2_pairs;
-	}
-
 	void reset() override {
 		std::vector<bool> _(_seen_tuples_sz_2.size(), false);
 		_seen_tuples_sz_2.swap(_);
 	}
 
 protected:
-	std::vector<std::pair<unsigned, unsigned>> _nov2_pairs;
-
 
 	bool evaluate_pairs(const ValuationT& valuation, const std::vector<unsigned>& novel) {
 		assert(valuation.size() >= novel.size());
@@ -111,17 +105,17 @@ protected:
 		auto all_indexes = index_valuation(valuation);
 		auto novel_indexes = index_valuation(novel, valuation);
 
-		_nov2_pairs.clear();
+		bool novel_pair_found = false;
 
 		for (unsigned feat_index1:novel_indexes) {
 			for (unsigned feat_index2:all_indexes) {
 				if (feat_index1==feat_index2) continue;
 				if (update_sz2_table(feat_index1, feat_index2)) {
-					_nov2_pairs.push_back(std::make_pair(feat_index1, feat_index2));
+					novel_pair_found = true;
 				}
 			}
 		}
-		return !_nov2_pairs.empty();
+		return novel_pair_found;
 	}
 
 
@@ -129,18 +123,18 @@ protected:
 		auto all_indexes = index_valuation(valuation);
 		unsigned sz = all_indexes.size();
 
-		_nov2_pairs.clear();
+		bool novel_pair_found = false;
 
 		for (unsigned i = 0; i < sz; ++i) {
 			unsigned index_i = all_indexes[i];
 
 			for (unsigned j = i+1; j < sz; ++j) {
 				if (update_sz2_table(index_i, all_indexes[j])) {
-					_nov2_pairs.push_back(std::make_pair(index_i, all_indexes[j]));
+					novel_pair_found = true;
 				}
 			}
 		}
-		return !_nov2_pairs.empty();
+		return novel_pair_found;
 	}
 
 	//! Helper. Map a feature valuation into proper indexes. Ignore negative values if so requested.

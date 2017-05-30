@@ -76,10 +76,6 @@ public:
 		_w1evaluator.mark_atoms_in_novelty1_table(atoms);
 	}
 	
-	void mark_nov2atoms_from_last_state(std::vector<std::pair<unsigned, unsigned>>& atoms) const override {
-		_w2evaluator.mark_nov2atoms_from_last_state(atoms);
-	}
-	
 	void reset() override {
 		_w1evaluator.reset();
 		_w2evaluator.reset();
