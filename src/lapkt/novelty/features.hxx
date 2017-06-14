@@ -87,44 +87,13 @@ class StraightFeatureSetEvaluator {
 public:
 	//!
 	template <typename StateT>
-	const std::vector<FeatureValueT>& evaluate(const StateT& state) const;
-	
-	bool uses_extra_features() const { return false; }
-};
-
-//! Partial specialization for all-bool states
-template <>
-template <typename StateT>
-const std::vector<bool>&
-StraightFeatureSetEvaluator<bool>::evaluate(const StateT& state) const { return state.get_boolean_values(); }
-
-//! Partial specialization for all-int states
-template <>
-template <typename StateT>
-const std::vector<int>&
-StraightFeatureSetEvaluator<int>::evaluate(const StateT& state) const { return state.get_int_values(); }
-
-
-//! A "straight" hybrid feature evaluator is aimed at working with states that can hold both int and bool values
-//! at the same time. As such, it can no longer return a const-ref to a vector of values, since it needs to compose
-//! a single vector containing all values. It is still, however, specialized, in the sense that it can be used
-//! only when we're not interested in additional features other than the values of all state variables.
-class StraightHybridFeatureSetEvaluator {
-public:
-	//!
-	template <typename StateT>
-	const std::vector<int> evaluate(const StateT& state) const {
-		unsigned sz = state.numAtoms();
-		std::vector<int> valuation;
-		valuation.reserve(sz);
-		
-		for (unsigned var = 0; var < sz; ++var) {
-			valuation.push_back(state.getValue(var));
-		}
-		return valuation;
+	const std::vector<FeatureValueT>& evaluate(const StateT& state) const {
+		return state.template dump<FeatureValueT>(); //@ see https://stackoverflow.com/a/613132
 	}
 	
 	bool uses_extra_features() const { return false; }
 };
+
+
 
 } } // namespaces
