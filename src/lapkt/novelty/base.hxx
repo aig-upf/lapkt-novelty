@@ -5,7 +5,7 @@
 #include <bits/stl_numeric.h>
 #include <limits>
 #include <unordered_set>
-
+#include <lapkt/novelty/tuples.hxx>
 
 namespace lapkt { namespace novelty {
 
@@ -14,7 +14,7 @@ enum class Novelty { Unknown, One, GTOne, OneAndAHalf, GTOneAndAHalf, Two, GTTwo
 
 //! A printer for discrete novelty values
 std::ostream& operator<<(std::ostream& os, const Novelty& nov);
-	
+
 //! Compute a vector with the indexes of those elements in a given valuation that are novel wrt a "parent" valuation.
 template <typename FeatureValueT>
 std::vector<unsigned> derive_novel(const std::vector<FeatureValueT>& current, const std::vector<FeatureValueT>& parent) {
@@ -33,18 +33,18 @@ class NoveltyEvaluatorI {
 public:
 	using FeatureValueT = _FeatureValueT;
 	using ValuationT = std::vector<FeatureValueT>;
-	
+
 	NoveltyEvaluatorI(unsigned max_novelty) : _max_novelty(max_novelty) {}
 	virtual ~NoveltyEvaluatorI() = default;
 	virtual NoveltyEvaluatorI* clone() const = 0;
 
 	//! Return the max novelty considered by this evaluator
 	unsigned max_novelty() const { return _max_novelty; }
-	
+
 	//! Evaluate assuming all elements in the valuation can be novel
 	virtual unsigned evaluate(const ValuationT& valuation, unsigned k) = 0;
-	
-	
+
+
 	//! Evaluate assuming all elements in the valuation can be novel
 	unsigned evaluate(const ValuationT& valuation) {
 		unsigned novelty = std::numeric_limits<unsigned>::max();
@@ -53,8 +53,8 @@ public:
 		}
 		return novelty;
 	}
-	
-	
+
+
 	//! Evaluate the novelty of a node taking into account the valuation of its parent, for optimization purposes
 	unsigned evaluate(const ValuationT& valuation, const ValuationT& parent_valuation) {
 		std::vector<unsigned> novel = derive_novel(valuation, parent_valuation);
@@ -64,21 +64,25 @@ public:
 		}
 		return novelty;
 	}
-	
+
 	//! Evaluate the novelty of a node taking into account the valuation of its parent, for optimization purposes
 	unsigned evaluate(const ValuationT& valuation, const ValuationT& parent_valuation, unsigned k) {
 		std::vector<unsigned> novel = derive_novel(valuation, parent_valuation);
 		return _evaluate(valuation, novel, k);
 	}
-	
-	
+
+
 	virtual void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const {
 		throw std::runtime_error("This NoveltyEvaluator is not ready to invoke this method");
 	}
-	
+
+	virtual void mark_tuples_in_novelty1_table(std::vector<Width1Tuple<int>>& tuples) const {
+		throw std::runtime_error("This NoveltyEvaluator is not ready to invoke this method");
+	}
+
 	//! Check only if the valuation contains a width-'k' tuple which is novel; return k if that is the case, or MAX if not
 	virtual unsigned _evaluate(const ValuationT& valuation, const std::vector<unsigned>& novel, unsigned k) = 0;
-	
+
 	virtual void reset() = 0;
 
 protected:
