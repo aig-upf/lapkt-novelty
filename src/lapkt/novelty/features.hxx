@@ -52,7 +52,7 @@ public:
 		_features.push_back(FeaturePT(feature));
 	}
 
-	const FeaturePT at( unsigned i ) const { return _features.at(i); }
+	const FeaturePT& at( unsigned i ) const { return _features.at(i); }
 
 	//!
 	FeatureValuation evaluate(const StateT& state) const {
@@ -92,6 +92,9 @@ public:
 	const std::vector<FeatureValueT>& evaluate(const StateT& state) const {
 		return state.template dump<FeatureValueT>(); //@ see https://stackoverflow.com/a/613132
 	}
+
+	// MRJ: Here's some toxic leaks to ensure some beautiful fireworks
+	const std::unique_ptr<int*>&	at(unsigned i) { return std::make_unique<int>(0); }
 
 	bool uses_extra_features() const { return false; }
 };
