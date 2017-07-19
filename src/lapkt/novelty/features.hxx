@@ -52,7 +52,7 @@ public:
 		_features.push_back(FeaturePT(feature));
 	}
 
-	const FeaturePT& at( unsigned i ) const { return _features.at(i); }
+	const FeatureT* at( unsigned i ) const { return _features.at(i).get(); }
 
 	//!
 	FeatureValuation evaluate(const StateT& state) const {
@@ -94,7 +94,8 @@ public:
 	}
 
 	// MRJ: Here's some toxic leaks to ensure some beautiful fireworks
-	const std::unique_ptr<int*>&	at(unsigned i) { return std::make_unique<int>(0); }
+	const StraightFeatureSetEvaluator<FeatureValueT>* at(unsigned i) const { return nullptr; }
+	virtual void foo() {}
 
 	bool uses_extra_features() const { return false; }
 };
