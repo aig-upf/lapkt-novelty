@@ -20,10 +20,10 @@ class NoveltyFeature {
 public:
 	virtual ~NoveltyFeature() = default;
 	virtual NoveltyFeature* clone() const = 0;
-	
+
 	//!
 	virtual FeatureValueT evaluate(const StateT& s) const = 0;
-	
+
 	//! Prints a representation of the object to the given stream.
 	friend std::ostream& operator<<(std::ostream &os, const NoveltyFeature& o) { return o.print(os); }
 	virtual std::ostream& print(std::ostream& os) const = 0;
@@ -31,32 +31,34 @@ public:
 
 
 //! An GenericFeatureSetEvaluator works for any type of state, for any combination of features
-//! that we want to use. In case we want to use only the values of state variables, however, it 
+//! that we want to use. In case we want to use only the values of state variables, however, it
 //! might be more performant to use one of the evaluators below.
 template <typename StateT>
 class GenericFeatureSetEvaluator {
 public:
 	using FeatureT = NoveltyFeature<StateT>;
 	using FeaturePT = std::unique_ptr<FeatureT>;
-	
+
 	GenericFeatureSetEvaluator() = default;
 	~GenericFeatureSetEvaluator() = default;
-	
+
 	GenericFeatureSetEvaluator(const GenericFeatureSetEvaluator&) = delete;
 	GenericFeatureSetEvaluator(GenericFeatureSetEvaluator&&) = default;
 	GenericFeatureSetEvaluator& operator=(const GenericFeatureSetEvaluator&) = delete;
 	GenericFeatureSetEvaluator& operator=(GenericFeatureSetEvaluator&&) = default;
-	
+
 	//!
 	void add(FeatureT* feature) {
 		_features.push_back(FeaturePT(feature));
 	}
-	
+
+	const FeaturePT at( unsigned i ) const { return _features.at(i); }
+
 	//!
 	FeatureValuation evaluate(const StateT& state) const {
 	// 	LPT_INFO("novelty-evaluations", "Evaluating state " << state);
 		FeatureValuation values;
-		
+
 		values.reserve(_features.size());
 		for (const auto& feature:_features) {
 			values.push_back(feature->evaluate(state));
@@ -66,12 +68,12 @@ public:
 	// 	LPT_DEBUG("heuristic", "Feature evaluation: " << std::endl << print::feature_set(varnames, values));
 		return values;
 	}
-	
+
 	//! The number of features in the set
 	unsigned size() const { return _features.size(); }
-	
+
 	bool uses_extra_features() const { return true; }
-	
+
 protected:
 	//! The features in the set
 	std::vector<FeaturePT> _features;
@@ -90,7 +92,7 @@ public:
 	const std::vector<FeatureValueT>& evaluate(const StateT& state) const {
 		return state.template dump<FeatureValueT>(); //@ see https://stackoverflow.com/a/613132
 	}
-	
+
 	bool uses_extra_features() const { return false; }
 };
 
