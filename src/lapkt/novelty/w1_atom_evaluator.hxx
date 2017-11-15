@@ -57,8 +57,9 @@ public:
 	uint64_t expected_size() { return expected_size(_num_atom_indexes); }
 	static uint64_t expected_size(uint32_t num_atom_indexes) {
 		return num_atom_indexes / 8; // Assuming a vector of bools packs 8 bools into a single byte.
-	}	
+	}
 
+	using Base::evaluate; // Give visibility to the base class evaluate method
 
 	//! Evaluate assuming all elements in the valuation can be novel
 	unsigned evaluate(const ValuationT& valuation, unsigned k) override {

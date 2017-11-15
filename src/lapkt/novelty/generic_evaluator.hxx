@@ -36,6 +36,7 @@ public:
 	GenericNoveltyEvaluator& operator=(GenericNoveltyEvaluator&&) = default;
 	GenericNoveltyEvaluator* clone() const override { return new GenericNoveltyEvaluator(*this);	}
 
+	using Base::evaluate; // Give visibility to the base class evaluate method
 
 	//! Evaluate assuming all elements in the valuation can be novel
 	unsigned evaluate(const ValuationT& valuation, unsigned k) override {

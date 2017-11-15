@@ -69,6 +69,8 @@ public:
 		return n_combined_indexes / 8;
 	}
 
+	using Base::evaluate; // Give visibility to the base class evaluate method
+
 
 	unsigned evaluate(const ValuationT& valuation, unsigned k) override {
 		assert(!valuation.empty());
