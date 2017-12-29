@@ -78,6 +78,14 @@ public:
 		if (k==0) return std::numeric_limits<unsigned>::max();
 		return evaluate_width_1_tuples(valuation, novel) ? 1 : std::numeric_limits<unsigned>::max();
 	}
+
+	unsigned evaluate_from_atoms(const std::vector<std::pair<unsigned, FeatureValueT>>& novel_atoms, unsigned k) override {
+		assert(k==0 || k==1);
+		if (k==0) return std::numeric_limits<unsigned>::max();
+		return evaluate_width_1_tuples_from_atoms(novel_atoms) ? 1 : std::numeric_limits<unsigned>::max();
+
+	}
+
 	
 	void mark_atoms_in_novelty1_table(std::vector<bool>& atoms) const override {
 		atoms = _seen_tuples_sz_1; // Copy the vector
@@ -93,6 +101,14 @@ protected:
 		bool exists_novel_tuple = false;
 		for (unsigned var_index:novel) {
 			exists_novel_tuple |= update_tuple1(var_index, valuation[var_index]);
+		}
+		return exists_novel_tuple;
+	}
+
+	bool evaluate_width_1_tuples_from_atoms(const std::vector<std::pair<unsigned, FeatureValueT>>& atoms) {
+		bool exists_novel_tuple = false;
+		for (const auto& atom:atoms) {
+			exists_novel_tuple |= update_tuple1(atom.first, atom.second);
 		}
 		return exists_novel_tuple;
 	}

@@ -83,6 +83,10 @@ public:
 	//! Check only if the valuation contains a width-'k' tuple which is novel; return k if that is the case, or MAX if not
 	virtual unsigned _evaluate(const ValuationT& valuation, const std::vector<unsigned>& novel, unsigned k) = 0;
 
+    virtual unsigned evaluate_from_atoms(const std::vector<std::pair<unsigned, FeatureValueT>>& novel_atoms, unsigned k) {
+        throw std::runtime_error("This novelty evaluator had not implemented the \"evaluate_from_atoms\" method");
+    }
+
 	virtual void reset() = 0;
 
 protected:
