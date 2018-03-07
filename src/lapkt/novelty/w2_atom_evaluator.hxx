@@ -57,7 +57,8 @@ public:
 	static unsigned num_combined_indexes(unsigned num_atom_indexes) {
 		// If we can have atom indexes in the range [0.._num_atom_indexes-1], then the highest combined index
 		// we can have is combine_indexes(_num_atom_indexes-1, _num_atom_indexes-2)
-		return _combine_indexes(num_atom_indexes-1, num_atom_indexes-2, num_atom_indexes);
+		// Hence the total number of indexes is that number plus one
+		return _combine_indexes(num_atom_indexes-1, num_atom_indexes-2, num_atom_indexes) + 1;
 	}
 
 
