@@ -19,8 +19,9 @@ std::ostream& operator<<(std::ostream& os, const Novelty& nov);
 template <typename FeatureValueT>
 std::vector<unsigned> derive_novel(const std::vector<FeatureValueT>& current, const std::vector<FeatureValueT>& parent) {
 	assert(current.size() == parent.size());
+	auto _size = current.size();
 	std::vector<unsigned> novel;
-	for (unsigned i = 0; i < current.size(); ++i) {
+	for (unsigned i = 0; i < _size; ++i) {
 		if (current[i] != parent[i]) {
 			novel.push_back(i);
 		}
