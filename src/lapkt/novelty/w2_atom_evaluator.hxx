@@ -114,6 +114,7 @@ protected:
 			for (unsigned feat_index2:all_indexes) {
 				if (feat_index1==feat_index2) continue;
 				if (update_sz2_table(feat_index1, feat_index2)) {
+					if (this->_read_only_mode) return true; // if read-only, no need to iterate further
 					novel_pair_found = true;
 				}
 			}
@@ -133,6 +134,7 @@ protected:
 
 			for (unsigned j = i+1; j < sz; ++j) {
 				if (update_sz2_table(index_i, all_indexes[j])) {
+					if (this->_read_only_mode) return true; // if read-only, no need to iterate further
 					novel_pair_found = true;
 				}
 			}
@@ -170,7 +172,7 @@ protected:
 		assert(combined < _seen_tuples_sz_2.size());
 		std::vector<bool>::reference value = _seen_tuples_sz_2[combined]; // see http://stackoverflow.com/a/8399942
 		if (!value) { // The tuple is new
-			value = true;
+			if (!this->_read_only_mode) value = true;
 			return true;
 		}
 		return false;

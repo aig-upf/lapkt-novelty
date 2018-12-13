@@ -35,7 +35,7 @@ public:
 	using FeatureValueT = _FeatureValueT;
 	using ValuationT = std::vector<FeatureValueT>;
 
-	NoveltyEvaluatorI(unsigned max_novelty) : _max_novelty(max_novelty) {}
+	NoveltyEvaluatorI(unsigned max_novelty) : _max_novelty(max_novelty), _read_only_mode(false) {}
 	virtual ~NoveltyEvaluatorI() = default;
 	virtual NoveltyEvaluatorI* clone() const = 0;
 
@@ -90,11 +90,17 @@ public:
 
 	virtual void reset() = 0;
 
+    void set_read_only(bool value) { _read_only_mode = value; }
+
 protected:
 	//! The maximum width this evaluator is prepared to handle.
 	//! If no particular width is specified, the evaluator computes up to (_max_novelty+1) levels of novelty
 	//! (i.e. if _max_novelty=1, then the evaluator will return whether a state has novelty 1 or >1.
 	unsigned _max_novelty;
+
+	//! Whether the novelty evaluation operation updates the novelty table with the newly-encountered
+	//! features as a side effect (mode=false) or not (mode=true)
+	bool _read_only_mode;
 };
 
 } } // namespaces

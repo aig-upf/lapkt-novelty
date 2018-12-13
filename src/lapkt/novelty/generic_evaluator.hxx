@@ -84,6 +84,15 @@ protected:
 			std::iota(_all_features_novel.begin(), _all_features_novel.end(), 0);
 		}
 	}
+
+	bool check_w1_table(unsigned variable, const FeatureValueT& value) const {
+		return _width_1_tuples.find(std::make_pair(variable, value)) == _width_1_tuples.end();
+	}
+
+	bool update_w1_table(unsigned variable, const FeatureValueT& value) {
+		auto res = _width_1_tuples.insert(std::make_pair(variable, value));
+		return res.second;
+	}
 };
 
 } } // namespaces

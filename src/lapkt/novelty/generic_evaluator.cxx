@@ -12,8 +12,11 @@ bool
 GenericNoveltyEvaluator<FeatureValueT>::evaluate_width_1_tuples(const ValuationT& valuation, const std::vector<unsigned>& novel) {
 	bool exists_novel_tuple = false;
 	for (unsigned idx:novel) {
-		auto res = _width_1_tuples.insert(std::make_pair(idx, valuation[idx]));
-		if (res.second) exists_novel_tuple = true; // The tuple is new, hence the novelty of the state is 1
+		if (this->_read_only_mode) {
+			if (check_w1_table(idx, valuation[idx])) return true;
+		} else {
+			exists_novel_tuple |= update_w1_table(idx, valuation[idx]);
+		}
 	}
 	return exists_novel_tuple;
 }
@@ -27,13 +30,25 @@ GenericNoveltyEvaluator<FeatureValueT>::evaluate_width_2_tuples(const ValuationT
 		int novel_val = valuation[novel_idx];
 		
 		for (unsigned j = 0; j < novel_idx; ++j) {
-			auto res = _width_2_tuples.insert(std::make_tuple(j, valuation[j], novel_idx, novel_val));
-			exists_novel_tuple |= res.second;
+			if (this->_read_only_mode) {
+				if (_width_2_tuples.find(std::make_tuple(j, valuation[j], novel_idx, novel_val)) == _width_2_tuples.end()) {
+					return true;
+				}
+			} else {
+				auto res = _width_2_tuples.insert(std::make_tuple(j, valuation[j], novel_idx, novel_val));
+				exists_novel_tuple |= res.second;
+			}
 		}
 		
 		for (unsigned j = novel_idx+1; j < valuation.size(); ++j) {
-			auto res = _width_2_tuples.insert(std::make_tuple(novel_idx, novel_val, j, valuation[j]));
-			exists_novel_tuple |= res.second;
+			if (this->_read_only_mode) {
+				if (_width_2_tuples.find(std::make_tuple(novel_idx, novel_val, j, valuation[j])) == _width_2_tuples.end()) {
+					return true;
+				}
+			} else {
+				auto res = _width_2_tuples.insert(std::make_tuple(novel_idx, novel_val, j, valuation[j]));
+				exists_novel_tuple |= res.second;
+			}
 		}
 	}
 	return exists_novel_tuple;

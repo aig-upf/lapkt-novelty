@@ -100,7 +100,10 @@ protected:
 	bool evaluate_width_1_tuples(const ValuationT& valuation, const std::vector<unsigned>& novel) {
 		bool exists_novel_tuple = false;
 		for (unsigned var_index:novel) {
-			exists_novel_tuple |= update_tuple1(var_index, valuation[var_index]);
+			if (update_tuple1(var_index, valuation[var_index])) {
+				exists_novel_tuple = true;
+				if (this->_read_only_mode) return true; // if read-only, no need to iterate further
+			}
 		}
 		return exists_novel_tuple;
 	}
@@ -108,7 +111,10 @@ protected:
 	bool evaluate_width_1_tuples_from_atoms(const std::vector<std::pair<unsigned, FeatureValueT>>& atoms) {
 		bool exists_novel_tuple = false;
 		for (const auto& atom:atoms) {
-			exists_novel_tuple |= update_tuple1(atom.first, atom.second);
+			if (update_tuple1(atom.first, atom.second)) {
+				exists_novel_tuple = true;
+				if (this->_read_only_mode) return true; // if read-only, no need to iterate further
+			}
 		}
 		return exists_novel_tuple;
 	}
@@ -119,7 +125,10 @@ protected:
 	bool evaluate_width_1_tuples(const ValuationT& valuation) {
 		bool exists_novel_tuple = false;
 		for (unsigned var_index = 0; var_index < valuation.size(); ++var_index) {
-			exists_novel_tuple |= update_tuple1(var_index, valuation[var_index]);
+			if (update_tuple1(var_index, valuation[var_index])) {
+				exists_novel_tuple = true;
+				if (this->_read_only_mode) return true; // if read-only, no need to iterate further
+			}
 		}
 		return exists_novel_tuple;
 	}	
@@ -130,7 +139,7 @@ protected:
 		unsigned atom_index = _indexer.to_index(index, value);
 		std::vector<bool>::reference ref = _seen_tuples_sz_1[atom_index];
 		if (!ref) { // The tuple is new
-			ref = true;
+			if (!this->_read_only_mode) ref = true;
 			return true;
 		}
 		return false;
