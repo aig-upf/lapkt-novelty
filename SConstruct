@@ -40,7 +40,7 @@ env.VariantDir(build_dirname, '.')
 
 Help(vars.GenerateHelpText(env))
 
-env.Append(CCFLAGS = ['-Wall', '-pedantic', '-std=c++14' ])  # Flags common to all options
+env.Append(CCFLAGS = ['-Wall', '-pedantic', '-std=c++17' ])  # Flags common to all options
 
 
 # Extreme debug implies normal debug as well

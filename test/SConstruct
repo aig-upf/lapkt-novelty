@@ -29,7 +29,7 @@ env = Environment()
 
 
 # GTest includes
-compiler_flags = '-std=c++0x -g -Wall -Wno-unused-variable -Wno-unused-parameter -Wextra -isystem ' + gtest_dir + '/include'
+compiler_flags = '-std=c++17 -g -Wall -Wno-unused-variable -Wno-unused-parameter -Wextra -isystem ' + gtest_dir + '/include'
 
 
 include_paths = ['.', os.path.join(lapkt_dir, 'include')]
