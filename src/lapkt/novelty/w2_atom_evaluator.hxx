@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <vector>
+#include <sstream>
 
 #include "base.hxx"
 #include <lapkt/tools/logging.hxx>
@@ -78,7 +79,11 @@ public:
 
 		if (k==0) return std::numeric_limits<unsigned>::max();
 
-		if (k!=2) throw std::runtime_error("Unexpected width value");
+		if (k!=2) {
+            std::stringstream buffer;
+            buffer << "Unexpected width value: " << k << " expected: 2" << std::endl;
+            throw std::runtime_error(buffer.str());
+        }
 
 		return evaluate_pairs(valuation) ? 2 : std::numeric_limits<unsigned>::max();
 	}
@@ -89,7 +94,11 @@ public:
 
 		if (k==0) return std::numeric_limits<unsigned>::max();
 
-		if (k!=2) throw std::runtime_error("Unexpected width value");
+		if (k!=2) {
+            std::stringstream buffer;
+            buffer << "Unexpected width value: " << k << " expected: 2" << std::endl;
+            throw std::runtime_error(buffer.str());
+        }
 
 		return evaluate_pairs(valuation, novel) ? 2 : std::numeric_limits<unsigned>::max();
 	}
