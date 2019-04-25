@@ -40,7 +40,7 @@ env.VariantDir(build_dirname, '.')
 
 Help(vars.GenerateHelpText(env))
 
-env.Append(CCFLAGS = ['-Wall', '-pedantic', '-std=c++17' ])  # Flags common to all options
+env.Append(CCFLAGS = ['-Wall', '-pedantic', '-std=c++17',  '-DBOOST_SYSTEM_NO_DEPRECATED' ])  # Flags common to all options
 
 
 # Extreme debug implies normal debug as well
@@ -62,8 +62,6 @@ isystem_paths = []
 
 
 sources = locate_source_files('src', '*.cxx')
-
-libs = ['boost_system']
 
 env.Append( CPPPATH = [ os.path.abspath(p) for p in include_paths ] )
 env.Append( CCFLAGS = [ '-isystem' + os.path.abspath(p) for p in isystem_paths ] )
