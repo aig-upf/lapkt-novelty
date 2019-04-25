@@ -65,7 +65,7 @@ sources = locate_source_files('src', '*.cxx')
 
 env.Append( CPPPATH = [ os.path.abspath(p) for p in include_paths ] )
 env.Append( CCFLAGS = [ '-isystem' + os.path.abspath(p) for p in isystem_paths ] )
-env.Append(LIBS = libs)
+
 # Determine all the build files
 build_files = [build_dirname + '/' + src for src in sources]
 
