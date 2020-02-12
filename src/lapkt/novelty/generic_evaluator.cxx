@@ -25,7 +25,9 @@ template <typename FeatureValueT>
 bool
 GenericNoveltyEvaluator<FeatureValueT>::evaluate_width_2_tuples(const ValuationT& valuation, const std::vector<unsigned>& novel) {
 	bool exists_novel_tuple = false;
-	for (unsigned i = 0; i < novel.size(); ++i) {
+	const auto nsz = novel.size();
+	const auto vsz = valuation.size();
+	for (unsigned i = 0; i < nsz; ++i) {
 		unsigned novel_idx = novel[i];
 		int novel_val = valuation[novel_idx];
 		
@@ -40,7 +42,7 @@ GenericNoveltyEvaluator<FeatureValueT>::evaluate_width_2_tuples(const ValuationT
 			}
 		}
 		
-		for (unsigned j = novel_idx+1; j < valuation.size(); ++j) {
+		for (unsigned j = novel_idx+1; j < vsz; ++j) {
 			if (this->_read_only_mode) {
 				if (_width_2_tuples.find(std::make_tuple(novel_idx, novel_val, j, valuation[j])) == _width_2_tuples.end()) {
 					return true;

@@ -124,7 +124,8 @@ protected:
 	//! but we favor here performance over avoiding code duplication.
 	bool evaluate_width_1_tuples(const ValuationT& valuation) {
 		bool exists_novel_tuple = false;
-		for (unsigned var_index = 0; var_index < valuation.size(); ++var_index) {
+		const auto sz = valuation.size();
+		for (unsigned var_index = 0; var_index < sz; ++var_index) {
 			if (update_tuple1(var_index, valuation[var_index])) {
 				exists_novel_tuple = true;
 				if (this->_read_only_mode) return true; // if read-only, no need to iterate further
